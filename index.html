@@ -15,9 +15,8 @@
 
 	#videoContainer {
 	  position: relative;
-	  width: min(100%, 1300px);
-	  height: calc(1300px * 16 / 9); /* 9:16 ориентация при ширине 1300 */
-	  max-height: 95vh;
+	  width: 1000px;
+	  aspect-ratio: 9 / 16;
 	}
 
 	iframe {
@@ -50,7 +49,6 @@
 </div>
 
 <script>
-  // Загрузка YouTube API
   const tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   document.body.appendChild(tag);
