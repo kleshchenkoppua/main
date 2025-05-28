@@ -2,82 +2,84 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Авто-фуллскрин YouTube</title>
+  <title>Вертикальное видео YouTube</title>
   <style>
-	body {
+	html, body {
 	  margin: 0;
+	  height: 100%;
 	  background: #000;
 	  display: flex;
 	  justify-content: center;
 	  align-items: center;
-	  height: 100vh;
 	}
 	#videoContainer {
 	  position: relative;
-	  width: 90%;
-	  max-width: 800px;
-	  aspect-ratio: 16/9;
+	  width: 360px;
+	  aspect-ratio: 9 / 16;
+	  max-height: 90vh;
 	}
 	iframe {
 	  width: 100%;
 	  height: 100%;
 	  border: none;
 	}
-	#playButton {
+	#clickOverlay {
 	  position: absolute;
 	  width: 100%;
 	  height: 100%;
-	  background: transparent;
+	  top: 0;
+	  left: 0;
 	  cursor: pointer;
-	  z-index: 10;
+	  z-index: 2;
 	}
   </style>
 </head>
 <body>
-  <div id="videoContainer">
-	<div id="playButton"></div>
-	<iframe id="ytPlayer"
-	  src="https://www.youtube.com/embed/yhYW5MAJLBQ?enablejsapi=1&autoplay=0"
-	  allow="autoplay; fullscreen"
-	  allowfullscreen>
-	</iframe>
-  </div>
 
-  <script>
-	const playButton = document.getElementById('playButton');
-	const iframe = document.getElementById('ytPlayer');
+<div id="videoContainer">
+  <div id="clickOverlay"></div>
+  <iframe 
+	id="ytPlayer"
+	src="https://www.youtube.com/embed/yhYW5MAJLBQ?enablejsapi=1&playsinline=1"
+	allow="autoplay; fullscreen"
+	allowfullscreen>
+  </iframe>
+</div>
 
-	function requestFullscreen(element) {
-	  if (element.requestFullscreen) {
-		element.requestFullscreen();
-	  } else if (element.webkitRequestFullscreen) {
-		element.webkitRequestFullscreen();
-	  } else if (element.mozRequestFullScreen) {
-		element.mozRequestFullScreen();
-	  } else if (element.msRequestFullscreen) {
-		element.msRequestFullscreen();
-	  }
+<script>
+  // Загрузка YouTube API
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+
+  let player;
+
+  function requestFullscreen(element) {
+	if (element.requestFullscreen) {
+	  element.requestFullscreen();
+	} else if (element.webkitRequestFullscreen) {
+	  element.webkitRequestFullscreen();
+	} else if (element.mozRequestFullScreen) {
+	  element.mozRequestFullScreen();
+	} else if (element.msRequestFullscreen) {
+	  element.msRequestFullscreen();
 	}
+  }
 
-	playButton.addEventListener('click', () => {
-	  // Убрать невидимую кнопку
-	  playButton.style.display = 'none';
-
-	  // Перейти в полноэкранный режим
-	  requestFullscreen(iframe);
-
-	  // Воспроизвести видео через API
-	  const player = new YT.Player('ytPlayer', {
-		events: {
-		  onReady: event => event.target.playVideo()
+  function onYouTubeIframeAPIReady() {
+	player = new YT.Player('ytPlayer', {
+	  events: {
+		'onReady': function(event) {
+		  document.getElementById('clickOverlay').addEventListener('click', () => {
+			document.getElementById('clickOverlay').style.display = 'none';
+			requestFullscreen(document.getElementById('ytPlayer'));
+			event.target.playVideo();
+		  });
 		}
-	  });
+	  }
 	});
+  }
+</script>
 
-	// Подключить YouTube IFrame API
-	const tag = document.createElement('script');
-	tag.src = "https://www.youtube.com/iframe_api";
-	document.body.appendChild(tag);
-  </script>
 </body>
 </html>
